@@ -31,6 +31,25 @@ class ReportReviewFixesTest(unittest.TestCase):
         self.assertIn("IRF и FEVD построены для ортогональных шоков", text)
         self.assertIn("g, Δu, π, Δi", text)
 
+    def test_ecm_vecm_diagnostic_block_is_present(self) -> None:
+        text = read_report()
+        self.assertIn("Диагностическая VECM/ECM-проверка", text)
+        self.assertIn("VECM как ECM-представление", text)
+        self.assertIn("vecm_diagnostic_summary.csv", text)
+
+    def test_calculation_screenshot_appendix_is_present(self) -> None:
+        text = read_report()
+        self.assertIn("Приложение C. Расчетные приложения Python", text)
+        self.assertIn("calculation_screenshots", text)
+        expected = [
+            ROOT / "reports" / "calculation_screenshots" / "calc_01_stationarity.png",
+            ROOT / "reports" / "calculation_screenshots" / "calc_02_adl_var_models.png",
+            ROOT / "reports" / "calculation_screenshots" / "calc_03_vecm_ecm.png",
+        ]
+        for path in expected:
+            self.assertTrue(path.exists(), f"Missing {path}")
+            self.assertGreater(path.stat().st_size, 1000, f"Empty {path}")
+
 
 if __name__ == "__main__":
     unittest.main()
